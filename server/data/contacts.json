@@ -1,0 +1,19 @@
+[
+  {
+    "id": "ENQ-MT71B3O3",
+    "createdAt": "2026-08-24T09:29:18.675Z",
+    "name": "MD TUFAIL",
+    "phone": "9334520459",
+    "email": "razatufail550@gmail.com",
+    "subject": "car  Booking",
+    "message": "This is the test booking car"
+  },
+  {
+    "id": "ENQ-MT6ZU430",
+    "createdAt": "2026-08-24T08:48:06.444Z",
+    "name": "Sunil Kumar",
+    "phone": "9876543210",
+    "subject": "Corporate Tour",
+    "message": "Need 3 Innovas for a 2-day trip to Rajgir and Bodh Gaya."
+  }
+]

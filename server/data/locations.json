@@ -1,0 +1,128 @@
+[
+  {
+    "id": "loc-vaishali",
+    "name": "Vaishali",
+    "state": "Bihar",
+    "type": "City",
+    "description": "Primary Guru Travel Operating Headquarters & Dispatch Hub",
+    "active": true,
+    "displayOrder": 1
+  },
+  {
+    "id": "loc-hajipur",
+    "name": "Hajipur",
+    "state": "Bihar",
+    "type": "Railway Station",
+    "description": "District headquarters & East Central Railway headquarters hub",
+    "active": true,
+    "displayOrder": 2
+  },
+  {
+    "id": "loc-patna",
+    "name": "Patna",
+    "state": "Bihar",
+    "type": "Airport",
+    "description": "Bihar State Capital, Jay Prakash Narayan Airport (PAT) & Patna Jn",
+    "active": true,
+    "displayOrder": 3
+  },
+  {
+    "id": "loc-muzaffarpur",
+    "name": "Muzaffarpur",
+    "state": "Bihar",
+    "type": "City",
+    "description": "Commercial & trading center of North Bihar",
+    "active": true,
+    "displayOrder": 4
+  },
+  {
+    "id": "loc-darbhanga",
+    "name": "Darbhanga",
+    "state": "Bihar",
+    "type": "Airport",
+    "description": "Cultural heart of Mithila & Darbhanga Airport (DMB)",
+    "active": true,
+    "displayOrder": 5
+  },
+  {
+    "id": "loc-samastipur",
+    "name": "Samastipur",
+    "state": "Bihar",
+    "type": "Railway Station",
+    "description": "Major railway junction and agricultural hub",
+    "active": true,
+    "displayOrder": 6
+  },
+  {
+    "id": "loc-sitamarhi",
+    "name": "Sitamarhi",
+    "state": "Bihar",
+    "type": "Tourist Destination",
+    "description": "Sacred Janaki temple site & Nepal border route gateway",
+    "active": true,
+    "displayOrder": 7
+  },
+  {
+    "id": "loc-chhapra",
+    "name": "Chhapra",
+    "state": "Bihar",
+    "type": "City",
+    "description": "Saran division headquarters connecting western Bihar",
+    "active": true,
+    "displayOrder": 8
+  },
+  {
+    "id": "loc-siwan",
+    "name": "Siwan",
+    "state": "Bihar",
+    "type": "City",
+    "description": "Prominent western Bihar transit hub",
+    "active": true,
+    "displayOrder": 9
+  },
+  {
+    "id": "loc-begusarai",
+    "name": "Begusarai",
+    "state": "Bihar",
+    "type": "City",
+    "description": "Industrial and refinery center on National Highway",
+    "active": true,
+    "displayOrder": 10
+  },
+  {
+    "id": "loc-gaya",
+    "name": "Gaya / Bodh Gaya",
+    "state": "Bihar",
+    "type": "Tourist Destination",
+    "description": "International Buddhist pilgrimage & Mahabodhi Temple circuit",
+    "active": true,
+    "displayOrder": 11
+  },
+  {
+    "id": "loc-delhi",
+    "name": "Delhi NCR",
+    "state": "Delhi",
+    "type": "City",
+    "description": "National capital outstation corridor via Purvanchal Expressway",
+    "active": true,
+    "displayOrder": 12
+  },
+  {
+    "id": "loc-kolkata",
+    "name": "Kolkata",
+    "state": "West Bengal",
+    "type": "City",
+    "description": "Eastern metropolitan highway corridor",
+    "active": true,
+    "displayOrder": 13
+  },
+  {
+    "id": "loc-kathmandu",
+    "name": "Kathmandu",
+    "state": "Nepal",
+    "type": "Border",
+    "description": "Nepal capital and Himalayan holiday circuit via Raxaul border",
+    "active": true,
+    "displayOrder": 14
+  }
+]
