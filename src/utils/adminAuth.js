@@ -1,3 +1,10 @@
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
+export const apiUrl = (endpoint) => {
+  if (!API_BASE_URL) return endpoint;
+  return `${API_BASE_URL}${endpoint}`;
+};
+
 const TOKEN_KEY = 'guru_travel_admin_token';
 const USER_KEY = 'guru_travel_admin_user';
 
@@ -25,7 +32,7 @@ async function apiRequest(endpoint, options = {}) {
   };
 
   try {
-    const response = await fetch(endpoint, {
+    const response = await fetch(apiUrl(endpoint), {
       ...options,
       headers
     });
@@ -54,7 +61,7 @@ async function apiRequest(endpoint, options = {}) {
     console.warn(`Network error on ${endpoint}:`, err);
     return {
       success: false,
-      error: 'Unable to connect to server. Please check your network or verify backend server is running.'
+      error: 'Unable to connect to Guru Travel backend. Please try again.'
     };
   }
 }
@@ -79,45 +86,58 @@ export const adminAuth = {
 
   login: async (username, password, remember = true) => {
     try {
-      const response = await fetch('/api/admin/login', {
+      const response = await fetch(apiUrl('/api/admin/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       });
 
       let data = null;
+
       try {
         data = await response.json();
-      } catch (e) {
+      } catch {
         data = null;
       }
 
       if (response.ok && data?.success && data?.token) {
         const storage = remember ? localStorage : sessionStorage;
+
         storage.setItem(TOKEN_KEY, data.token);
-        storage.setItem(USER_KEY, JSON.stringify(data.user || { username }));
-        return { success: true, user: data.user };
+        storage.setItem(
+          USER_KEY,
+          JSON.stringify(data.user || { username })
+        );
+
+        return {
+          success: true,
+          user: data.user
+        };
       }
 
       if (response.status === 401 || response.status === 400) {
-        return { success: false, error: data?.error || 'Invalid admin credentials.' };
-      }
-
-      if (response.status === 503 || !response.ok) {
-        return { 
-          success: false, 
-          error: data?.error || 'Backend server (port 5000) is offline. Please start it with: npm run server' 
+        return {
+          success: false,
+          error: data?.error || 'Invalid admin credentials.'
         };
       }
-    } catch (err) {
-      console.warn('Network error while connecting to /api/admin/login:', err);
+
       return {
         success: false,
-        error: 'Unable to connect to Guru Travel backend server. Please verify backend is running on port 5000.'
+        error: data?.error || `Backend request failed (${response.status}).`
+      };
+
+    } catch (err) {
+      console.warn(
+        'Network error while connecting to Guru Travel backend:',
+        err
+      );
+
+      return {
+        success: false,
+        error: 'Unable to connect to Guru Travel backend. Please try again.'
       };
     }
-
-    return { success: false, error: 'Unable to sign in. Please check your credentials.' };
   },
 
   logout: () => {

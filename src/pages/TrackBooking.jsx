@@ -5,6 +5,7 @@ import {
   HelpCircle, Loader2, Copy, Check 
 } from 'lucide-react';
 import { GURU_PHONE_PRIMARY, GURU_PHONE_PRIMARY_DISPLAY, generateWhatsAppUrl } from '../utils/whatsappHelper';
+import { apiUrl } from '../utils/adminAuth';
 
 function findInClientCache(refId, phone) {
   try {
@@ -51,7 +52,7 @@ export default function TrackBooking({ onNavigateHome }) {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/bookings/track', {
+      const response = await fetch(apiUrl('/api/bookings/track'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ referenceId: ref, phone: ph })

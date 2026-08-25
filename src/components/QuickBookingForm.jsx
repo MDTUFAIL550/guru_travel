@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { generateWhatsAppUrl, buildWhatsAppMessage } from '../utils/whatsappHelper.js';
 import { getRouteServiceType } from '../utils/getRouteServiceType.js';
+import { apiUrl } from '../utils/adminAuth.js';
 
 export const PICKUP_LOCATIONS = [
   "Vaishali (Primary Hub)",
@@ -243,7 +244,7 @@ export default function QuickBookingForm({
     };
 
     try {
-      const response = await fetch('/api/bookings', {
+      const response = await fetch(apiUrl('/api/bookings'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

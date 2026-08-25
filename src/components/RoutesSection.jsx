@@ -7,6 +7,7 @@ import {
 import { routeCategories, routesData } from '../data/routes';
 import { GURU_PHONE_PRIMARY, GURU_PHONE_PRIMARY_DISPLAY, generateWhatsAppUrl } from '../utils/whatsappHelper';
 import { getRouteServiceType } from '../utils/getRouteServiceType';
+import { apiUrl } from '../utils/adminAuth';
 
 export default function RoutesSection({ onSelectRoute }) {
   const [activeTab, setActiveTab] = useState('all');
@@ -32,7 +33,7 @@ export default function RoutesSection({ onSelectRoute }) {
 
   // Dynamically load active routes from API with fallback
   useEffect(() => {
-    fetch('/api/routes')
+    fetch(apiUrl('/api/routes'))
       .then(res => res.json())
       .then(data => {
         if (data?.success && Array.isArray(data.routes) && data.routes.length > 0) {

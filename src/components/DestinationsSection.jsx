@@ -4,6 +4,7 @@ import {
   ShieldCheck, Info, Clock, CheckCircle2, ChevronDown, ChevronUp, Search 
 } from 'lucide-react';
 import { destinationGroups } from '../data/destinations';
+import { apiUrl } from '../utils/adminAuth';
 
 export default function DestinationsSection({ onSelectDestination }) {
   const [activeTab, setActiveTab] = useState(0);
@@ -14,7 +15,7 @@ export default function DestinationsSection({ onSelectDestination }) {
 
   // Dynamically load active destinations from API with fallback
   useEffect(() => {
-    fetch('/api/destinations')
+    fetch(apiUrl('/api/destinations'))
       .then(res => res.json())
       .then(data => {
         if (data?.success && Array.isArray(data.destinations) && data.destinations.length > 0) {

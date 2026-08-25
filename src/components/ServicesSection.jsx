@@ -4,6 +4,7 @@ import {
   X, ShieldCheck, CheckCircle2, Phone, MessageSquare, Car, Layers 
 } from 'lucide-react';
 import { servicesData } from '../data/services';
+import { apiUrl } from '../utils/adminAuth';
 
 const iconMap = {
   Plane: Plane,
@@ -22,7 +23,7 @@ export default function ServicesSection({ onSelectService }) {
 
   // Dynamically load active services from API with fallback to static servicesData
   useEffect(() => {
-    fetch('/api/services')
+    fetch(apiUrl('/api/services'))
       .then(res => res.json())
       .then(data => {
         if (data?.success && Array.isArray(data.services) && data.services.length > 0) {

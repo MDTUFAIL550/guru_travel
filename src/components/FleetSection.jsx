@@ -4,6 +4,7 @@ import {
   Car as CarIcon, X, Fuel, Cog, ChevronDown, ChevronUp, Info, Search 
 } from 'lucide-react';
 import { fleetCategories, fleetData } from '../data/fleet';
+import { apiUrl } from '../utils/adminAuth';
 
 export default function FleetSection({ onSelectVehicle }) {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -15,7 +16,7 @@ export default function FleetSection({ onSelectVehicle }) {
 
   // Dynamically load active fleet from API with fallback to static fleetData
   useEffect(() => {
-    fetch('/api/fleet')
+    fetch(apiUrl('/api/fleet'))
       .then(res => res.json())
       .then(data => {
         if (data?.success && Array.isArray(data.fleet) && data.fleet.length > 0) {
