@@ -857,118 +857,257 @@ export default function AdminDashboard({ onLogout, onNavigateHome }) {
                 />
               </div>
 
-              {/* Bookings Table / Cards */}
-              <div className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
+              {/* Bookings Container (Mobile Cards + Desktop Table) */}
+              <div className="space-y-4">
                 {bookings.length === 0 ? (
-                  <div className="p-12 text-center text-slate-500 text-sm">
+                  <div className="p-12 text-center text-slate-500 text-sm bg-slate-900 rounded-3xl border border-slate-800">
                     No bookings found matching the selected filters.
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-slate-950/60 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800 text-[10px]">
-                        <tr>
-                          <th className="py-3.5 px-4">Ref ID</th>
-                          <th className="py-3.5 px-4">Customer</th>
-                          <th className="py-3.5 px-4">Route</th>
-                          <th className="py-3.5 px-4">Date & Time</th>
-                          <th className="py-3.5 px-4">Vehicle</th>
-                          <th className="py-3.5 px-4">Status</th>
-                          <th className="py-3.5 px-4 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-800/60">
-                        {bookings.map((booking) => (
-                          <tr key={booking.referenceId} className="hover:bg-slate-800/40 transition-colors">
-                            <td className="py-3.5 px-4 font-mono font-bold text-amber-400">
+                  <>
+                    {/* 1. Mobile & Tablet Card View (< lg screens) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
+                      {bookings.map((booking) => (
+                        <div
+                          key={booking.referenceId}
+                          className="bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-lg flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all"
+                        >
+                          {/* Card Header: Ref ID & Status */}
+                          <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Ref ID:</span>
                               <button
                                 onClick={() => copyToClipboard(booking.referenceId)}
-                                className="flex items-center space-x-1 hover:underline"
-                                title="Click to copy"
+                                className="font-mono text-xs sm:text-sm font-bold text-amber-400 flex items-center space-x-1 hover:underline py-1 px-1.5 rounded-md bg-slate-950 border border-slate-800"
+                                title="Click to copy Reference ID"
                               >
                                 <span>{booking.referenceId}</span>
-                                {copiedId === booking.referenceId ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-slate-500" />}
+                                {copiedId === booking.referenceId ? (
+                                  <Check className="w-3.5 h-3.5 text-emerald-400 ml-1" />
+                                ) : (
+                                  <Copy className="w-3.5 h-3.5 text-slate-400 ml-1" />
+                                )}
                               </button>
-                            </td>
+                            </div>
 
-                            <td className="py-3.5 px-4">
-                              <span className="font-bold text-white block">{booking.name}</span>
-                              <span className="text-slate-400 text-[11px]">{booking.phone}</span>
-                            </td>
+                            <span className={`px-2.5 py-1 rounded-full border text-[10px] sm:text-xs font-black uppercase tracking-wider ${getStatusBadge(booking.status)}`}>
+                              {booking.status}
+                            </span>
+                          </div>
 
-                            <td className="py-3.5 px-4">
-                              <span className="text-slate-200 block">{booking.pickup} → {booking.destination}</span>
-                              <span className="text-[10px] text-amber-500/90 font-medium">{booking.serviceType}</span>
-                            </td>
-
-                            <td className="py-3.5 px-4">
-                              <span className="text-slate-200 block font-medium">{booking.date}</span>
-                              <span className="text-[11px] text-slate-400">{booking.time}</span>
-                            </td>
-
-                            <td className="py-3.5 px-4 text-slate-300">
-                              {booking.vehicle}
-                            </td>
-
-                            <td className="py-3.5 px-4">
-                              <span className={`inline-block px-2.5 py-0.5 rounded-full border text-[10px] font-extrabold uppercase ${getStatusBadge(booking.status)}`}>
-                                {booking.status}
-                              </span>
-                            </td>
-
-                            <td className="py-3.5 px-4 text-right">
-                              <div className="inline-flex items-center space-x-1.5">
-                                <a
-                                  href={generateAdminToCustomerWhatsAppUrl(booking)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="p-1.5 rounded-lg text-emerald-400 hover:bg-emerald-950/60 transition-colors"
-                                  title="WhatsApp Customer"
-                                >
-                                  <MessageSquare className="w-4 h-4" />
-                                </a>
-
+                          {/* Customer & Trip Details */}
+                          <div className="space-y-2.5 text-xs">
+                            {/* Customer Name & Phone */}
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <span className="text-[11px] text-slate-400 block font-medium">Customer:</span>
+                                <span className="text-sm font-bold text-white block mt-0.5">{booking.name}</span>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-[11px] text-slate-400 block font-medium">Contact:</span>
                                 <a
                                   href={`tel:${normalizeIndianPhone(booking.phone)}`}
-                                  className="p-1.5 rounded-lg text-amber-400 hover:bg-amber-950/60 transition-colors"
-                                  title="Call Customer"
+                                  className="text-xs font-bold text-amber-400 hover:underline block mt-0.5"
                                 >
-                                  <PhoneCall className="w-4 h-4" />
+                                  {booking.phone}
                                 </a>
-
-                                <button
-                                  onClick={() => setSelectedBooking(booking)}
-                                  className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
-                                  title="View Details"
-                                >
-                                  <Eye className="w-4 h-4" />
-                                </button>
-
-                                {/* Visual Separator for Destructive Action */}
-                                <div className="w-[1px] h-3.5 bg-slate-800 mx-0.5" />
-
-                                <button
-                                  onClick={() => setDeleteConfirm({
-                                    type: 'booking',
-                                    id: booking.referenceId || booking.id,
-                                    name: booking.name,
-                                    referenceId: booking.referenceId || booking.id,
-                                    customer: booking.name,
-                                    route: `${booking.pickup} → ${booking.destination}`,
-                                    date: booking.date
-                                  })}
-                                  className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-950/40 transition-colors"
-                                  title="Delete Booking"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
                               </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                            </div>
+
+                            {/* Route */}
+                            <div className="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+                              <span className="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Route & Service</span>
+                              <span className="text-xs font-bold text-slate-100 block mt-0.5">
+                                {booking.pickup} → {booking.destination}
+                              </span>
+                              <span className="text-[11px] text-amber-400 font-semibold block mt-0.5">
+                                {booking.serviceType}
+                              </span>
+                            </div>
+
+                            {/* Date, Time & Vehicle */}
+                            <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300">
+                              <div className="p-2 rounded-lg bg-slate-950/50 border border-slate-800/60">
+                                <span className="text-slate-400 block text-[10px]">Date & Time:</span>
+                                <span className="font-bold text-white">{booking.date}</span>
+                                <span className="text-slate-400 ml-1 font-mono">({booking.time})</span>
+                              </div>
+                              <div className="p-2 rounded-lg bg-slate-950/50 border border-slate-800/60">
+                                <span className="text-slate-400 block text-[10px]">Vehicle:</span>
+                                <span className="font-bold text-white truncate block">{booking.vehicle}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 4 Large Touch-Friendly Mobile Action Buttons (Min 44px touch targets) */}
+                          <div className="pt-3 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            {/* WhatsApp */}
+                            <a
+                              href={generateAdminToCustomerWhatsAppUrl(booking)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="min-h-[44px] flex items-center justify-center px-3 py-2 rounded-xl text-xs font-bold text-emerald-950 bg-emerald-400 hover:bg-emerald-300 transition-all shadow-sm active:scale-95 space-x-1.5"
+                              title="Chat on WhatsApp"
+                            >
+                              <MessageSquare className="w-4 h-4 text-emerald-950 shrink-0" />
+                              <span>WhatsApp</span>
+                            </a>
+
+                            {/* Call */}
+                            <a
+                              href={`tel:${normalizeIndianPhone(booking.phone)}`}
+                              className="min-h-[44px] flex items-center justify-center px-3 py-2 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 transition-all shadow-sm active:scale-95 space-x-1.5"
+                              title="Call Customer"
+                            >
+                              <PhoneCall className="w-4 h-4 text-slate-950 shrink-0" />
+                              <span>Call</span>
+                            </a>
+
+                            {/* View Details */}
+                            <button
+                              onClick={() => setSelectedBooking(booking)}
+                              className="min-h-[44px] flex items-center justify-center px-3 py-2 rounded-xl text-xs font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 hover:text-white border border-slate-700 transition-all active:scale-95 space-x-1.5"
+                              title="View Full Booking Details"
+                            >
+                              <Eye className="w-4 h-4 text-slate-300 shrink-0" />
+                              <span>Details</span>
+                            </button>
+
+                            {/* Delete */}
+                            <button
+                              onClick={() => setDeleteConfirm({
+                                type: 'booking',
+                                id: booking.referenceId || booking.id,
+                                name: booking.name,
+                                referenceId: booking.referenceId || booking.id,
+                                customer: booking.name,
+                                route: `${booking.pickup} → ${booking.destination}`,
+                                date: booking.date
+                              })}
+                              className="min-h-[44px] flex items-center justify-center px-3 py-2 rounded-xl text-xs font-bold text-red-300 bg-red-950/70 hover:bg-red-900/80 border border-red-800/80 transition-all active:scale-95 space-x-1.5"
+                              title="Delete Booking"
+                            >
+                              <Trash2 className="w-4 h-4 text-red-400 shrink-0" />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* 2. Desktop Table View (>= lg screens) */}
+                    <div className="hidden lg:block bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead className="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800 text-[10px]">
+                            <tr>
+                              <th className="py-4 px-4">Ref ID</th>
+                              <th className="py-4 px-4">Customer</th>
+                              <th className="py-4 px-4">Route</th>
+                              <th className="py-4 px-4">Date & Time</th>
+                              <th className="py-4 px-4">Vehicle</th>
+                              <th className="py-4 px-4">Status</th>
+                              <th className="py-4 px-4 text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-800/60">
+                            {bookings.map((booking) => (
+                              <tr key={booking.referenceId} className="hover:bg-slate-800/40 transition-colors">
+                                <td className="py-3.5 px-4 font-mono font-bold text-amber-400">
+                                  <button
+                                    onClick={() => copyToClipboard(booking.referenceId)}
+                                    className="flex items-center space-x-1 hover:underline py-1 px-1.5 rounded-md hover:bg-slate-800/60"
+                                    title="Click to copy Reference ID"
+                                  >
+                                    <span>{booking.referenceId}</span>
+                                    {copiedId === booking.referenceId ? (
+                                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                    ) : (
+                                      <Copy className="w-3.5 h-3.5 text-slate-500" />
+                                    )}
+                                  </button>
+                                </td>
+
+                                <td className="py-3.5 px-4">
+                                  <span className="font-bold text-white block">{booking.name}</span>
+                                  <span className="text-slate-400 text-[11px]">{booking.phone}</span>
+                                </td>
+
+                                <td className="py-3.5 px-4">
+                                  <span className="text-slate-200 block">{booking.pickup} → {booking.destination}</span>
+                                  <span className="text-[10px] text-amber-500/90 font-medium">{booking.serviceType}</span>
+                                </td>
+
+                                <td className="py-3.5 px-4">
+                                  <span className="text-slate-200 block font-medium">{booking.date}</span>
+                                  <span className="text-[11px] text-slate-400">{booking.time}</span>
+                                </td>
+
+                                <td className="py-3.5 px-4 text-slate-300">
+                                  {booking.vehicle}
+                                </td>
+
+                                <td className="py-3.5 px-4">
+                                  <span className={`inline-block px-2.5 py-0.5 rounded-full border text-[10px] font-extrabold uppercase ${getStatusBadge(booking.status)}`}>
+                                    {booking.status}
+                                  </span>
+                                </td>
+
+                                <td className="py-3.5 px-4 text-right">
+                                  <div className="inline-flex items-center space-x-2">
+                                    <a
+                                      href={generateAdminToCustomerWhatsAppUrl(booking)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="w-9 h-9 rounded-xl flex items-center justify-center text-emerald-300 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-700/60 transition-all shadow-xs"
+                                      title="WhatsApp Customer"
+                                    >
+                                      <MessageSquare className="w-4.5 h-4.5 text-emerald-400" />
+                                    </a>
+
+                                    <a
+                                      href={`tel:${normalizeIndianPhone(booking.phone)}`}
+                                      className="w-9 h-9 rounded-xl flex items-center justify-center text-amber-300 bg-amber-950/60 hover:bg-amber-900 border border-amber-700/60 transition-all shadow-xs"
+                                      title="Call Customer"
+                                    >
+                                      <PhoneCall className="w-4.5 h-4.5 text-amber-400" />
+                                    </a>
+
+                                    <button
+                                      onClick={() => setSelectedBooking(booking)}
+                                      className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-xs"
+                                      title="View Details"
+                                    >
+                                      <Eye className="w-4.5 h-4.5" />
+                                    </button>
+
+                                    {/* Visual Separator for Destructive Action */}
+                                    <div className="w-[1px] h-4 bg-slate-700 mx-0.5" />
+
+                                    <button
+                                      onClick={() => setDeleteConfirm({
+                                        type: 'booking',
+                                        id: booking.referenceId || booking.id,
+                                        name: booking.name,
+                                        referenceId: booking.referenceId || booking.id,
+                                        customer: booking.name,
+                                        route: `${booking.pickup} → ${booking.destination}`,
+                                        date: booking.date
+                                      })}
+                                      className="w-9 h-9 rounded-xl flex items-center justify-center text-red-400 hover:text-red-300 bg-red-950/50 hover:bg-red-900/60 border border-red-800/60 transition-all shadow-xs"
+                                      title="Delete Booking"
+                                    >
+                                      <Trash2 className="w-4.5 h-4.5 text-red-400" />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -1096,17 +1235,17 @@ export default function AdminDashboard({ onLogout, onNavigateHome }) {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setEditingItem({ type: 'fleet', isNew: false, data: { ...vehicle } })}
-                          className="p-1.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-800 transition-colors"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-400 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-xs"
                           title="Edit Vehicle"
                         >
-                          <Edit3 className="w-4 h-4" />
+                          <Edit3 className="w-4 h-4 text-amber-400" />
                         </button>
                         <button
                           onClick={() => setDeleteConfirm({ type: 'fleet', id: vehicle.id, name: vehicle.name })}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-red-400 hover:text-red-300 bg-red-950/50 hover:bg-red-900/60 border border-red-800/60 transition-all shadow-xs"
                           title="Delete Vehicle"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
                       </div>
                     </div>
@@ -1188,17 +1327,17 @@ export default function AdminDashboard({ onLogout, onNavigateHome }) {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setEditingItem({ type: 'services', isNew: false, data: { ...srv, features: Array.isArray(srv.features) ? srv.features.join('\n') : srv.features } })}
-                          className="p-1.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-800 transition-colors"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-400 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-xs"
                           title="Edit Service"
                         >
-                          <Edit3 className="w-4 h-4" />
+                          <Edit3 className="w-4 h-4 text-amber-400" />
                         </button>
                         <button
                           onClick={() => setDeleteConfirm({ type: 'services', id: srv.id, name: srv.name })}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-red-400 hover:text-red-300 bg-red-950/50 hover:bg-red-900/60 border border-red-800/60 transition-all shadow-xs"
                           title="Delete Service"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
                       </div>
                     </div>
@@ -1269,36 +1408,25 @@ export default function AdminDashboard({ onLogout, onNavigateHome }) {
                 </select>
               </div>
 
-              {/* Table */}
-              <div className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-950/60 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800 text-[10px]">
-                    <tr>
-                      <th className="py-3.5 px-4">Order</th>
-                      <th className="py-3.5 px-4">Location Name</th>
-                      <th className="py-3.5 px-4">State / Region</th>
-                      <th className="py-3.5 px-4">Type</th>
-                      <th className="py-3.5 px-4">Description</th>
-                      <th className="py-3.5 px-4">Status</th>
-                      <th className="py-3.5 px-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/60">
-                    {locations.map((loc) => (
-                      <tr key={loc.id} className="hover:bg-slate-800/40 transition-colors">
-                        <td className="py-3.5 px-4 font-mono font-bold text-amber-400">#{loc.displayOrder}</td>
-                        <td className="py-3.5 px-4 font-bold text-white">{loc.name}</td>
-                        <td className="py-3.5 px-4 text-slate-300">{loc.state}</td>
-                        <td className="py-3.5 px-4">
-                          <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-md bg-slate-800 text-slate-300">
-                            {loc.type}
+              {/* Locations Content (Mobile Cards + Desktop Table) */}
+              <div className="space-y-4">
+                {/* 1. Mobile Cards (< md screens) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 md:hidden">
+                  {locations.map((loc) => (
+                    <div
+                      key={loc.id}
+                      className={`p-4 rounded-2xl border transition-all flex flex-col justify-between space-y-3 ${
+                        loc.active !== false ? 'bg-slate-900 border-slate-800' : 'bg-slate-900/50 border-slate-800/60 opacity-60'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-800 text-amber-400">
+                            #{loc.displayOrder} • {loc.type}
                           </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-slate-400 max-w-xs truncate">{loc.description}</td>
-                        <td className="py-3.5 px-4">
                           <button
                             onClick={() => handleToggleStatus('locations', loc.id, loc.active !== false)}
-                            className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full border transition-all ${
+                            className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border transition-all ${
                               loc.active !== false
                                 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                                 : 'bg-slate-800 text-slate-500 border-slate-700'
@@ -1306,29 +1434,98 @@ export default function AdminDashboard({ onLogout, onNavigateHome }) {
                           >
                             {loc.active !== false ? 'Active' : 'Inactive'}
                           </button>
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <div className="inline-flex items-center space-x-1">
-                            <button
-                              onClick={() => setEditingItem({ type: 'locations', isNew: false, data: { ...loc } })}
-                              className="p-1.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-800 transition-colors"
-                              title="Edit Location"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => setDeleteConfirm({ type: 'locations', id: loc.id, name: loc.name })}
-                              className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 transition-colors"
-                              title="Delete Location"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
+                        </div>
+
+                        <h3 className="font-bold text-sm text-white">{loc.name}</h3>
+                        <span className="text-xs text-slate-400 block mt-0.5">{loc.state}</span>
+                        {loc.description && (
+                          <p className="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">
+                            {loc.description}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-800 flex items-center justify-end space-x-2">
+                        <button
+                          onClick={() => setEditingItem({ type: 'locations', isNew: false, data: { ...loc } })}
+                          className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-200 hover:text-amber-400 hover:bg-slate-700 border border-slate-700 font-bold text-xs flex items-center space-x-1.5 transition-all"
+                        >
+                          <Edit3 className="w-4 h-4 text-amber-400" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => setDeleteConfirm({ type: 'locations', id: loc.id, name: loc.name })}
+                          className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-red-950/50 text-red-300 hover:bg-red-900/60 border border-red-800/60 font-bold text-xs flex items-center space-x-1.5 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-400" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 2. Desktop Table (>= md screens) */}
+                <div className="hidden md:block bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800 text-[10px]">
+                      <tr>
+                        <th className="py-4 px-4">Order</th>
+                        <th className="py-4 px-4">Location Name</th>
+                        <th className="py-4 px-4">State / Region</th>
+                        <th className="py-4 px-4">Type</th>
+                        <th className="py-4 px-4">Description</th>
+                        <th className="py-4 px-4">Status</th>
+                        <th className="py-4 px-4 text-right">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/60">
+                      {locations.map((loc) => (
+                        <tr key={loc.id} className="hover:bg-slate-800/40 transition-colors">
+                          <td className="py-3.5 px-4 font-mono font-bold text-amber-400">#{loc.displayOrder}</td>
+                          <td className="py-3.5 px-4 font-bold text-white">{loc.name}</td>
+                          <td className="py-3.5 px-4 text-slate-300">{loc.state}</td>
+                          <td className="py-3.5 px-4">
+                            <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-md bg-slate-800 text-slate-300">
+                              {loc.type}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-400 max-w-xs truncate">{loc.description}</td>
+                          <td className="py-3.5 px-4">
+                            <button
+                              onClick={() => handleToggleStatus('locations', loc.id, loc.active !== false)}
+                              className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border transition-all ${
+                                loc.active !== false
+                                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                                  : 'bg-slate-800 text-slate-500 border-slate-700'
+                              }`}
+                            >
+                              {loc.active !== false ? 'Active' : 'Inactive'}
+                            </button>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <div className="inline-flex items-center space-x-2">
+                              <button
+                                onClick={() => setEditingItem({ type: 'locations', isNew: false, data: { ...loc } })}
+                                className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-400 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-xs"
+                                title="Edit Location"
+                              >
+                                <Edit3 className="w-4 h-4 text-amber-400" />
+                              </button>
+                              <button
+                                onClick={() => setDeleteConfirm({ type: 'locations', id: loc.id, name: loc.name })}
+                                className="w-9 h-9 rounded-xl flex items-center justify-center text-red-400 hover:text-red-300 bg-red-950/50 hover:bg-red-900/60 border border-red-800/60 transition-all shadow-xs"
+                                title="Delete Location"
+                              >
+                                <Trash2 className="w-4 h-4 text-red-400" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
@@ -1444,17 +1641,17 @@ export default function AdminDashboard({ onLogout, onNavigateHome }) {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setEditingItem({ type: 'routes', isNew: false, data: { ...rt } })}
-                          className="p-1.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-800 transition-colors"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-400 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-xs"
                           title="Edit Route"
                         >
-                          <Edit3 className="w-4 h-4" />
+                          <Edit3 className="w-4 h-4 text-amber-400" />
                         </button>
                         <button
                           onClick={() => setDeleteConfirm({ type: 'routes', id: rt.id, name: rt.label || `${rt.origin} → ${rt.destination}` })}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-red-400 hover:text-red-300 bg-red-950/50 hover:bg-red-900/60 border border-red-800/60 transition-all shadow-xs"
                           title="Delete Route"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
                       </div>
                     </div>
@@ -1535,17 +1732,17 @@ export default function AdminDashboard({ onLogout, onNavigateHome }) {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setEditingItem({ type: 'destinations', isNew: false, data: { ...dest } })}
-                          className="p-1.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-800 transition-colors"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-amber-400 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all shadow-xs"
                           title="Edit Destination"
                         >
-                          <Edit3 className="w-4 h-4" />
+                          <Edit3 className="w-4 h-4 text-amber-400" />
                         </button>
                         <button
                           onClick={() => setDeleteConfirm({ type: 'destinations', id: dest.id, name: dest.name })}
-                          className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-red-400 hover:text-red-300 bg-red-950/50 hover:bg-red-900/60 border border-red-800/60 transition-all shadow-xs"
                           title="Delete Destination"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 text-red-400" />
                         </button>
                       </div>
                     </div>
